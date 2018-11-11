@@ -150,7 +150,35 @@ class DBHelper {
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}`);
+    let imgUrl = `/img/${(restaurant.photograph.split('.')[0]||restaurant.id)}-small.jpg`;
+    return imgUrl;
+  }
+
+    /**
+   * Restaurant srcset attribute for browser to decide best resolution. It uses restaurant.photograph
+   * and fallbacks to restaurant.id if former is missing.
+   */
+  static imageSrcsetForRestaurant(restaurant) {
+    const imgSrc = `/img/${(restaurant.photograph.split('.')[0]||restaurant.id)}`;
+    return `${imgSrc}-small.jpg 300w,
+            ${imgSrc}-large.jpg 800w`;
+  }
+
+  /**
+   * Restaurant sizes attribute so browser knows image sizes before deciding
+   * what image to download.
+   */
+  static imageSizesForRestaurant(restaurant) {
+    return `(max-width: 350px) 280px, 600px`;
+  }
+
+  /**
+   * Static offline map
+   */
+  static mapOffline() {
+    const map = document.getElementById('map');
+    map.className = 'map-offline';
+    map.innerHTML = `<div class="warning-message">Maps cannot be loaded at this time. Please check your internet connection or return later.</div>`;
   }
 
   /**
@@ -166,16 +194,5 @@ class DBHelper {
       marker.addTo(newMap);
     return marker;
   } 
-  /* static mapMarkerForRestaurant(restaurant, map) {
-    const marker = new google.maps.Marker({
-      position: restaurant.latlng,
-      title: restaurant.name,
-      url: DBHelper.urlForRestaurant(restaurant),
-      map: map,
-      animation: google.maps.Animation.DROP}
-    );
-    return marker;
-  } */
-
 }
 
